@@ -1,50 +1,50 @@
 
 import java.util.Scanner;
 
-abstract class Room {
+abstract class Connection {
     int units;
 
-    Room(int units) {
+    Connection(int units) {
         this.units = units;
     }
 
     abstract double calculateBill();
 }
 
-class SingleRoom extends Room {
-    SingleRoom(int units) {
+class Home extends Connection {
+    Home(int units) {
         super(units);
     }
 
     double calculateBill() {
-        return units * 8;
+        if (units <= 100) {
+            return units * 5.0;
+        }
+        return 100 * 5.0 + (units - 100) * 7.0;
     }
 }
 
-class SharedRoom extends Room {
-    int occupants;
-
-    SharedRoom(int units, int occupants) {
-        super(units);
-        this.occupants = occupants;
-    }
-
-    double calculateBill() {
-        return (units * 6.0) / occupants;
-    }
-}
-
-class AcRoom extends Room {
-    AcRoom(int units) {
+class Shop extends Connection {
+    Shop(int units) {
         super(units);
     }
 
     double calculateBill() {
-        return units * 10 + 200;
+        return units * 8.0 + 100;
     }
 }
 
-public class ElectricityBill {
+class Factory extends Connection {
+    Factory(int units) {
+        super(units);
+    }
+
+    double calculateBill() {
+        return Math.max(units * 6.0, 1000.0);
+    }
+}
+
+public class ElectricityBilling {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         int n = sc.nextInt();
@@ -54,21 +54,20 @@ public class ElectricityBill {
             String type = sc.next();
             int units = sc.nextInt();
 
-            Room r;
+            Connection c;
 
             switch (type) {
-                case "SINGLE":
-                    r = new SingleRoom(units);
+                case "HOME":
+                    c = new Home(units);
                     break;
-                case "SHARED":
-                    int occupants = sc.nextInt();
-                    r = new SharedRoom(units, occupants);
+                case "SHOP":
+                    c = new Shop(units);
                     break;
                 default:
-                    r = new AcRoom(units);
+                    c = new Factory(units);
             }
 
-            double bill = r.calculateBill();
+            double bill = c.calculateBill();
             System.out.printf("%s: %.2f%n", type, bill);
             total += bill;
         }
